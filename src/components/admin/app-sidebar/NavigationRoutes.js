@@ -6,7 +6,7 @@ export const navigationRoutes = {
   routes: [
     {
       name: 'user-table',
-      displayName: 'menu.dataTables',
+      displayName: 'User Tables',
       meta: {
         iconClass: 'vuestic-iconset-tables',
       },

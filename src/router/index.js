@@ -2,13 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import AuthLayout from '../components/auth/AuthLayout'
 import AppLayout from '../components/admin/AppLayout'
-import ChangeForm from '../components/forms/ChangeForm'
+import ChangeForm from '../components/forms/UserForm'
 
 Vue.use(Router)
-
-const EmptyParentComponent = {
-  template: '<router-view></router-view>',
-}
 
 const demoRoutes = []
 if (process.env.NODE_ENV === 'development' || process.env.VUE_APP_INCLUDE_DEMOS) {
@@ -21,12 +17,6 @@ export default new Router({
   mode: process.env.VUE_APP_ROUTER_MODE_HISTORY === 'true' ? 'history' : 'hash',
   routes: [
     ...demoRoutes,
-    {
-      path: '/edit',
-      name: 'edit user',
-      component: ChangeForm,
-      props: true,
-    },
     {
       path: '*',
       redirect: { name: 'user-table' },
@@ -59,8 +49,15 @@ export default new Router({
         {
           name: 'user-table',
           path: '/admin/user-table',
-          component: () => import('../components/data-tables/DataTables.vue'),
+          component: () => import('../components/data-tables/UserTables.vue'),
           wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/Tables',
+          default: true
+        },
+        {
+          name: 'edit-user',
+          path: '/admin/user-table/:username/edit',
+          component: () => import('../components/forms/UserForm.vue'),
+          props: true
         },
       ],
     },

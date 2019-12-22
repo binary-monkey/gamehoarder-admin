@@ -8,7 +8,7 @@
       <template slot="actions" slot-scope="props">
 
         <va-popover :message="`${$t('tables.edit')} ${props.rowData.username}`" placement="top">
-          <router-link :to="{ name: 'change group', params: {username} }">
+          <router-link :to="{ name: 'edit-user', params: {username: props.rowData.username} }">
             <va-button flat small color="gray" icon="fa fa-pencil"/>
           </router-link>
         </va-popover>
@@ -22,8 +22,6 @@
 </template>
 
 <script>
-
-import axios from 'axios'
 
 export default {
   data () {
@@ -59,7 +57,6 @@ export default {
       this.$http.get('http://localhost:8000/en/api/users')
         .then(response => {
           this.users = response.data.data
-          console.log(this.users)
         })
     },
 
