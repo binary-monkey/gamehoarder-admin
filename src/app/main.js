@@ -15,6 +15,7 @@ import VueClipboard from 'vue-clipboard2'
 import VeeValidate from 'vee-validate'
 
 import '../metrics'
+import Axios from 'axios'
 
 // NOTE: workaround for VeeValidate + vuetable-2
 Vue.use(VeeValidate, { fieldsBagName: 'formFields' })
@@ -48,3 +49,9 @@ new Vue({
   store,
   render: h => h(App),
 })
+
+Vue.prototype.$http = Axios
+const token = localStorage.getItem('token')
+if (token) {
+  Vue.prototype.$http.defaults.headers.common['Authorization'] = token
+}

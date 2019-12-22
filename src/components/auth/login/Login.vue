@@ -1,11 +1,9 @@
 <template>
 <form @submit.prevent="onsubmit">
   <va-input
-    v-model="email"
-    type="email"
-    :label="$t('auth.email')"
-    :error="!!emailErrors.length"
-    :error-messages="emailErrors"
+    v-model="username"
+    type="text"
+    :label="$t('username')"
   />
 
   <va-input
@@ -27,7 +25,7 @@ export default {
   name: 'login',
   data () {
     return {
-      email: '',
+      username: '',
       password: '',
       keepLoggedIn: false,
       emailErrors: [],
@@ -41,12 +39,32 @@ export default {
   },
   methods: {
     onsubmit () {
-      this.emailErrors = this.email ? [] : ['Email is required']
       this.passwordErrors = this.password ? [] : ['Password is required']
       if (!this.formReady) {
         return
       }
-      this.$router.push({ name: 'dashboard' })
+
+      this.$http.post('http://localhost:8000/en/api/login', { username: this.username, password: this.password })
+        .then(res => {
+          if (res.data.token) {
+            this.loginSuccessful(res)
+          }
+        }).catch(() => {
+          this.loginFailed()
+        })
+    },
+    loginSuccessful (req) {
+      if (!req.data.token) {
+        this.loginFailed()
+        return
+      }
+      localStorage.setItem('token', req.data.token)
+      this.error = false
+      this.$router.replace(this.$route.query.redirect || '/')
+    },
+    loginFailed () {
+      this.error = 'Login failed!'
+      localStorage.removeItem('token')
     },
   },
 }

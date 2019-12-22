@@ -1,29 +1,35 @@
 <template>
-  <va-card :title="$t('tables.serverSidePagination')">
+  <va-card :title="$t('Users')" :key="tableKey"> <!-- TODO should be update when something is deleted -->
     <va-data-table
       :fields="fields"
       :data="users"
-      :loading="loading"
-      @page-selected="readItems"
-      api-mode
+      :per-page="10"
     >
-      <template slot="avatar" slot-scope="props">
-        <img :src="props.rowData.avatar" class="data-table-server-pagination---avatar">
+      <template slot="actions" slot-scope="props">
+
+        <va-popover :message="`${$t('tables.edit')} ${props.rowData.username}`" placement="top">
+          <router-link :to="{ name: 'change group', params: {username} }">
+            <va-button flat small color="gray" icon="fa fa-pencil"/>
+          </router-link>
+        </va-popover>
+
+        <va-popover :message="`${$t('tables.delete')} ${props.rowData.username}`" placement="top">
+          <va-button flat small color="gray" icon="fa fa-trash" v-on:click="deleteUser(props.rowData.username)"/>
+        </va-popover>
       </template>
     </va-data-table>
   </va-card>
 </template>
 
 <script>
+
 import axios from 'axios'
 
 export default {
   data () {
     return {
-      perPage: 3,
-      totalPages: 0,
       users: [],
-      loading: false,
+      tableKey: 1,
     }
   },
   computed: {
@@ -39,6 +45,9 @@ export default {
       }, {
         name: 'groups__name',
         title: 'groups',
+      }, {
+        name: '__slot:actions',
+        dataClass: 'text-right',
       }]
     },
   },
@@ -47,22 +56,23 @@ export default {
   },
   methods: {
     readItems () {
-      this.loading = true
-
-      axios.get('http://192.168.0.4:8000/en/api/users')
+      this.$http.get('http://localhost:8000/en/api/users')
         .then(response => {
-          this.users = response.data
-          this.loading = false
+          this.users = response.data.data
+          console.log(this.users)
         })
+    },
+
+    deleteUser: function (username) {
+      this.$http.post('http://localhost:8000/en/api/users/delete', { username: username })
+
+      alert(username + ' deleted')
+      this.readItems()
+      this.tableKey += 1
     },
   },
 }
 </script>
 
 <style lang="scss">
-  .data-table-server-pagination---avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-  }
 </style>

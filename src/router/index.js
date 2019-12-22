@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import AuthLayout from '../components/auth/AuthLayout'
 import AppLayout from '../components/admin/AppLayout'
+import ChangeForm from '../components/forms/ChangeForm'
 
 Vue.use(Router)
 
@@ -16,12 +17,19 @@ if (process.env.NODE_ENV === 'development' || process.env.VUE_APP_INCLUDE_DEMOS)
 }
 
 export default new Router({
+// const router = new Router({
   mode: process.env.VUE_APP_ROUTER_MODE_HISTORY === 'true' ? 'history' : 'hash',
   routes: [
     ...demoRoutes,
     {
+      path: '/edit',
+      name: 'edit user',
+      component: ChangeForm,
+      props: true,
+    },
+    {
       path: '*',
-      redirect: {name: 'login'},
+      redirect: { name: 'user-table' },
     },
     {
       path: '/auth',
@@ -33,67 +41,43 @@ export default new Router({
           component: () => import('../components/auth/login/Login.vue'),
         },
         {
-          path: '',
-          redirect: {name: 'login'},
-        },
-      ],
-    },
-    {
-      path: '/404',
-      component: EmptyParentComponent,
-      children: [
-        {
-          name: 'not-found-advanced',
-          path: 'not-found-advanced',
-          component: () => import('../components/pages/404-pages/VaPageNotFoundSearch.vue'),
-        },
-        {
-          name: 'not-found-simple',
-          path: 'not-found-simple',
-          component: () => import('../components/pages/404-pages/VaPageNotFoundSimple.vue'),
-        },
-        {
-          name: 'not-found-custom',
-          path: 'not-found-custom',
-          component: () => import('../components/pages/404-pages/VaPageNotFoundCustom.vue'),
-        },
-        {
-          name: 'not-found-large-text',
-          path: '/pages/not-found-large-text',
-          component: () => import('../components/pages/404-pages/VaPageNotFoundLargeText.vue'),
+          name: 'logout',
+          path: 'logout',
+          beforeEnter (to, from, next) {
+            localStorage.removeItem('token')
+            next({ name: 'login' })
+          },
         },
       ],
     },
     {
       name: 'Admin',
-      path: '/',
+      path: '/admin',
       component: AppLayout,
+      // meta: { requiresAuth: true },
       children: [
         {
-          name: 'dashboard',
-          path: 'dashboard',
-          component: () => import('../components/dashboard/Dashboard.vue'),
-          default: true,
-        },
-        {
           name: 'user-table',
-          path: 'user-table',
+          path: '/admin/user-table',
           component: () => import('../components/data-tables/DataTables.vue'),
           wikiLink: 'https://github.com/epicmaxco/vuestic-admin/wiki/Tables',
-        },
-        {
-          name: 'pages',
-          path: 'pages',
-          component: EmptyParentComponent,
-          children: [
-            {
-              name: '404-pages',
-              path: '404-pages',
-              component: () => import('../components/pages/404-pages/404PagesPage'),
-            },
-          ],
         },
       ],
     },
   ],
 })
+//
+// router.beforeEach((to, from, next) => {
+//   console.log('router before each', to.fullPath)
+//   if (to.matched.some(record => record.meta.requiresAuth)) {
+//     if (!localStorage.getItem('token')) {
+//       next({ name: 'login' })
+//     } else {
+//       next()
+//     }
+//   } else {
+//     next()
+//   }
+// })
+//
+// export default router

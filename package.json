@@ -1,9 +1,8 @@
 {
-  "name": "vuestic-admin",
-  "version": "2.0.0",
+  "name": "gamehoarder-admin",
+  "version": "0.0.1",
   "private": false,
-  "description": "Vue.js admin template",
-  "author": "smartapant <smartapant@gmail.com>",
+  "description": "Vue.js admin page for ",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

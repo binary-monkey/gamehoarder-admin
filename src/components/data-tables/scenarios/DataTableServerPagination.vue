@@ -2,15 +2,11 @@
   <va-card :title="$t('tables.serverSidePagination')">
     <va-data-table
       :fields="fields"
-      :data="items"
+      :data="users"
       :loading="loading"
-      :totalPages="totalPages"
       @page-selected="readItems"
       api-mode
     >
-      <template slot="avatar" slot-scope="props">
-        <img :src="props.rowData.avatar" class="data-table-server-pagination---avatar">
-      </template>
     </va-data-table>
   </va-card>
 </template>
@@ -23,26 +19,23 @@ export default {
     return {
       perPage: 3,
       totalPages: 0,
-      items: [],
+      users: [],
       loading: false,
     }
   },
   computed: {
     fields () {
       return [{
-        name: '__slot:avatar',
-        width: '60px',
-      }, {
-        name: 'first_name',
-        title: this.$t('tables.headings.firstName'),
-        width: '20%',
-      }, {
-        name: 'last_name',
-        title: this.$t('tables.headings.lastName'),
+        name: 'username',
+        title: 'username',
         width: '20%',
       }, {
         name: 'email',
-        title: this.$t('tables.headings.email'),
+        title: 'email',
+        width: '20%',
+      }, {
+        name: 'groups__name',
+        title: 'groups',
       }]
     },
   },
@@ -50,18 +43,12 @@ export default {
     this.readItems()
   },
   methods: {
-    readItems (page = 0) {
+    readItems () {
       this.loading = true
 
-      const params = {
-        per_page: this.perPage,
-        page: page,
-      }
-
-      axios.get('https://reqres.in/api/users', { params })
+      axios.get('http://127.0.0.1:8000/en/api/users')
         .then(response => {
-          this.items = response.data.data
-          this.totalPages = response.data.total_pages
+          this.users = response.data
           this.loading = false
         })
     },
